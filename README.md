@@ -8,7 +8,7 @@
 
 The `signifly/laravel-translator` package allows you to easily add database based translations to your Eloquent models.
 
-Below is a small example of how to use it.
+Below is a small example of how to use it:
 
 ```php
 // Inside a model
@@ -24,6 +24,10 @@ class Post extends Model
     }
 }
 ```
+
+## Documentation
+
+To get started follow the installation instructions below.
 
 ## Installation
 
