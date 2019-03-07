@@ -5,8 +5,9 @@ namespace Signifly\Translator\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Signifly\Translator\Contracts\Translation as TranslationContract;
 
-class Translation extends Model
+class Translation extends Model implements TranslationContract
 {
     /**
      * The attributes that are mass assignable.

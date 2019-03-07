@@ -2,6 +2,7 @@
 
 namespace Signifly\Translator;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Signifly\Translator\Models\Translation;
 use Signifly\Translator\Exceptions\InvalidConfiguration;
@@ -38,7 +39,8 @@ class TranslatorServiceProvider extends ServiceProvider
     {
         $model = config('translator.translation_model') ?? Translation::class;
 
-        if (! is_a($model, Translation::class, true)) {
+        if (! is_a($model, TranslationContract::class, true)
+            || ! is_a($model, Model::class, true)) {
             throw InvalidConfiguration::modelIsNotValid($model);
         }
 
@@ -47,8 +49,8 @@ class TranslatorServiceProvider extends ServiceProvider
 
     public static function getTranslationModelInstance(): TranslationContract
     {
-        $translationModelClassName = self::determineTranslationModel();
+        $model = self::determineTranslationModel();
 
-        return new $translationModelClassName();
+        return new $model();
     }
 }
