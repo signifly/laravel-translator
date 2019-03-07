@@ -18,9 +18,8 @@ class TranslatorServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/translator.php' => config_path('translator.php'),
-            ], 'translator-config');
+            $this->publishConfigs();
+            $this->publishMigrations();
         }
 
         $this->mergeConfigFrom(__DIR__.'/../config/translator.php', 'translator');
@@ -33,6 +32,26 @@ class TranslatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
+    }
+
+    protected function publishConfigs(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/translator.php' => config_path('translator.php'),
+        ], 'translator-config');
+    }
+
+    protected function publishMigrations(): void
+    {
+        if (! class_exists('CreateTranslationsTable')) {
+            return;
+        }
+
+        $timestamp = date('Y_m_d_His', time());
+
+        $this->publishes([
+            __DIR__.'/../migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
+        ], 'migrations');
     }
 
     public static function determineTranslationModel(): string
