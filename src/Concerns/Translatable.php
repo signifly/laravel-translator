@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
 {
-    protected function bootTranslatable(): void
+    public static function bootTranslatable(): void
     {
         // Clean up translations
         static::deleting(function (Model $model) {
