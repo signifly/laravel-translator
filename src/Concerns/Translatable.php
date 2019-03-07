@@ -236,7 +236,7 @@ trait Translatable
         $relation = $query->getRelation('translations');
 
         $model = get_class($this);
-        $translationModel = TranslatableServiceProvider::determineTranslationModel();
+        $translationModel = TranslatorServiceProvider::determineTranslationModel();
 
         $subQuery = $translationModel::selectRaw('count(*)')
             ->whereColumn($relation->getQualifiedForeignKeyName(), $relation->getQualifiedParentKeyName())
