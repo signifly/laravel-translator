@@ -18,7 +18,7 @@ trait Translatable
         static::deleting(function (Model $model) {
             if (collect(class_uses_recursive($model))->contains(SoftDeletes::class)
                 && ! $model->forceDeleting) {
-                    return;
+                return;
             }
 
             $model->translations()->delete();
@@ -48,7 +48,7 @@ trait Translatable
     public function getColumnsFromDatabase(): Collection
     {
         $columns = Collection::make(
-            DB::select("SHOW COLUMNS FROM " . $this->getTable())
+            DB::select('SHOW COLUMNS FROM '.$this->getTable())
         );
 
         return $columns->pluck('Field');
@@ -86,7 +86,7 @@ trait Translatable
             ->first();
 
         if (! $translation) {
-            return null;
+            return;
         }
 
         return $translation->value;
@@ -245,7 +245,7 @@ trait Translatable
 
         return $query->defaultSelectAll()
             ->selectRaw("@modifier_count := ({$subQuery->toSql()}) as translations_count", $subQuery->getBindings())
-            ->selectRaw("@modifier_count / ? * 100 as translations_percentage", [
+            ->selectRaw('@modifier_count / ? * 100 as translations_percentage', [
                 count($this->getTranslatableAttributes()),
             ])
             ->addSubSelect('translations_last_modified_at', $translationModel::select('updated_at')
