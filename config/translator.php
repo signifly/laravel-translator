@@ -17,7 +17,8 @@ return [
 
     /*
      * This model will be used to store translations.
-     * It should either be or extend the Signifly\Translator\Models\Translation model.
+     * It should be implements the Signifly\Translator\Contracts\Translation interface
+     * and extend Illuminate\Database\Eloquent\Model.
      */
     'translation_model' => \Signifly\Translator\Models\Translation::class,
 

@@ -5,6 +5,7 @@ namespace Signifly\Translator;
 use Illuminate\Support\ServiceProvider;
 use Signifly\Translator\Models\Translation;
 use Signifly\Translator\Exceptions\InvalidConfiguration;
+use Signifly\Translator\Contracts\Translation as TranslationContract;
 
 class TranslatorServiceProvider extends ServiceProvider
 {
@@ -16,9 +17,12 @@ class TranslatorServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([
-            ]);
+            $this->publishes([
+                __DIR__.'/../config/translator.php' => config_path('translator.php'),
+            ], 'translator-config');
         }
+
+        $this->mergeConfigFrom(__DIR__.'/../config/translator.php', 'translator');
     }
 
     /**
@@ -39,5 +43,12 @@ class TranslatorServiceProvider extends ServiceProvider
         }
 
         return $model;
+    }
+
+    public static function getTranslationModelInstance(): TranslationContract
+    {
+        $translationModelClassName = self::determineTranslationModel();
+
+        return new $translationModelClassName();
     }
 }
