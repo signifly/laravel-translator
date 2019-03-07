@@ -20,6 +20,15 @@ class Translation extends Model
         'type',
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        if (! isset($this->table)) {
+            $this->setTable(config('translator.table_name'));
+        }
+
+        parent::__construct($attributes);
+    }
+
     /**
      * The associated translatable relation.
      *
