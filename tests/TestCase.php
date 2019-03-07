@@ -1,7 +1,11 @@
 <?php
 
-namespace Signifly\Translatable\Tests;
+namespace Signifly\Translator\Tests;
 
+use CreateTranslationsTable;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Signifly\Translator\Tests\Models\Product;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Signifly\Translator\TranslatorServiceProvider;
 
@@ -32,18 +36,36 @@ abstract class TestCase extends Orchestra
         ];
     }
 
-    protected function setUpDatabase()
+    protected function setUpDatabase(): void
     {
         $this->createProductsTable();
+        $this->createTranslationsTable();
+        $this->seedProductsTable();
     }
 
-    protected function createProductsTable()
+    protected function createProductsTable(): void
     {
-        $this->app['db']->connection()->getSchemaBuilder()->create('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->string('name');
             $table->text('description');
             $table->timestamps();
         });
+    }
+
+    protected function createTranslationsTable()
+    {
+        include_once __DIR__.'/../migrations/create_translations_table.php.stub';
+        (new CreateTranslationsTable())->up();
+    }
+
+    protected function seedProductsTable(): void
+    {
+        foreach (range(1, 10) as $index) {
+            Product::create([
+                'name' => "name {$index}",
+                'description' => "description {$index}",
+            ]);
+        }
     }
 }
