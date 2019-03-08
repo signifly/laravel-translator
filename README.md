@@ -11,7 +11,7 @@ The `signifly/laravel-translator` package allows you to easily add database base
 Below is a small example of how to use it:
 
 ```php
-// Inside a model
+// Add the trait to your translatable models
 use Signifly\Translator\Concerns\Translatable;
 
 class Post extends Model
@@ -24,6 +24,26 @@ class Post extends Model
     }
 }
 ```
+
+In order to store translations, you can do the following:
+
+```php
+$post = Post::find(1);
+$post->translate('en', [
+    'title' => 'Some title',
+    'description' => 'description',
+]);
+// returns a Illuminate\Support\Collection of translations
+```
+
+You can also translate a single attribute:
+
+```php
+$post->translateAttribute('en', 'title', 'Some title');
+// returns Signifly\Translator\Contracts\Translation
+```
+
+*Note:* When storing translations it does not update the translatable model (Post). So if you need to update the attributes, call the `update()` method on the model.
 
 ## Documentation
 
