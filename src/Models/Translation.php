@@ -18,7 +18,6 @@ class Translation extends Model implements TranslationContract
         'language_code',
         'key',
         'value',
-        'type',
     ];
 
     public function __construct(array $attributes = [])
