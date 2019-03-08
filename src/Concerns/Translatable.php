@@ -20,6 +20,16 @@ trait Translatable
                 ? $model->clearTranslations($model->forceDeleting)
                 : $model->clearTranslations(true);
         });
+
+        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
+            static::restoring(function (Model $model) {
+                if (! config('translator.soft_deletes')) {
+                    return;
+                }
+
+                $model->translations()->restore();
+            });
+        }
     }
 
     abstract public function getTranslatableAttributes(): array;
