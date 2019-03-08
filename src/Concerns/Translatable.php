@@ -16,12 +16,9 @@ trait Translatable
     {
         // Clean up translations
         static::deleting(function (Model $model) {
-            if (collect(class_uses_recursive($model))->contains(SoftDeletes::class)
-                && ! $model->forceDeleting) {
-                return;
-            }
-
-            $model->translations()->delete();
+            collect(class_uses_recursive($model))->contains(SoftDeletes::class)
+                ? $model->clearTranslations($model->forceDeleting)
+                : $model->clearTranslations(true);
         });
     }
 
@@ -38,6 +35,48 @@ trait Translatable
             TranslatorServiceProvider::determineTranslationModel(),
             'translatable'
         );
+    }
+
+    /**
+     * Clear translations based on model deletion.
+     *
+     * @param  bool $forceDelete
+     * @return void
+     */
+    protected function clearTranslations($forceDelete = false): void
+    {
+        $translatorSoftDeletes = config('translator.soft_deletes');
+
+        if (! $translatorSoftDeletes && ! $forceDelete) {
+            return;
+        }
+
+        if ($translatorSoftDeletes && ! $forceDelete) {
+            $this->translations()->delete();
+            return;
+        }
+
+        $this->translations->forceDelete();
+    }
+
+    /**
+     * Get a plain attribute (not a relationship).
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function getAttributeValue($key)
+    {
+        $value = parent::getAttributeValue($key);
+
+        if (config('translator.auto_translate_attributes') && $this->hasTranslation($key)) {
+            return $this->getTranslationValue(
+                config('translator.active_language_code'),
+                $key
+            );
+        }
+
+        return $value;
     }
 
     /**
@@ -85,11 +124,7 @@ trait Translatable
             ->where('language_code', $langCode)
             ->first();
 
-        if (! $translation) {
-            return;
-        }
-
-        return $translation->value;
+        return $translation ? $translation->value : null;
     }
 
     /**
