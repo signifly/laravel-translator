@@ -51,7 +51,7 @@ class TranslatorServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
-        ], 'migrations');
+        ], 'translator-migrations');
     }
 
     public static function determineTranslationModel(): string

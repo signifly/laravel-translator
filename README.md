@@ -39,6 +39,51 @@ $ composer require signifly/laravel-translator
 
 The package will automatically register itself.
 
+You can publish the migration with:
+```bash
+php artisan vendor:publish --tag="translator-migrations"
+```
+
+*Note*: The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the migration accordingly.
+
+
+```bash
+php artisan migrate
+```
+
+You can optionally publish the config file with:
+```bash
+php artisan vendor:publish --tag="translator-config"
+```
+
+This is the contents of the published config file:
+
+```php
+return [
+
+    /*
+     * The default language code that is used by the package
+     * to make comparisons against other languages
+     * in order to provide statistics.
+     */
+    'default_language_code' => 'en',
+
+    /*
+     * This is the name of the table that will be created by the migration and
+     * used by the Translation model shipped with this package.
+     */
+    'table_name' => 'translations',
+
+    /*
+     * This model will be used to store translations.
+     * It should be implements the Signifly\Translator\Contracts\Translation interface
+     * and extend Illuminate\Database\Eloquent\Model.
+     */
+    'translation_model' => \Signifly\Translator\Models\Translation::class,
+
+];
+```
+
 ## Testing
 ```bash
 $ composer test
