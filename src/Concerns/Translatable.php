@@ -78,12 +78,13 @@ trait Translatable
     public function getAttributeValue($key)
     {
         $value = parent::getAttributeValue($key);
+        $activeLangCode = config('translator.active_language_code');
 
-        if (config('translator.auto_translate_attributes') && $this->hasTranslation($key)) {
-            return $this->getTranslationValue(
-                config('translator.active_language_code'),
-                $key
-            );
+        if (
+            config('translator.auto_translate_attributes')
+            && $this->hasTranslation($activeLangCode, $key)
+        ) {
+            return $this->getTranslationValue($activeLangCode, $key);
         }
 
         return $value;
