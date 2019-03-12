@@ -35,7 +35,7 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
-    function it_returns_the_correct_language_with_auto_translate_attributes_enabled()
+    public function it_returns_the_correct_language_with_auto_translate_attributes_enabled()
     {
         config([
             'translator.active_language_code' => 'da',
