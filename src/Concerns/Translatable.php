@@ -63,6 +63,7 @@ trait Translatable
 
         if ($translatorSoftDeletes && ! $forceDelete) {
             $this->translations()->delete();
+
             return;
         }
 
