@@ -43,7 +43,7 @@ class TranslatorServiceProvider extends ServiceProvider
 
     protected function publishMigrations(): void
     {
-        if (! class_exists('CreateTranslationsTable')) {
+        if (class_exists('CreateTranslationsTable')) {
             return;
         }
 
