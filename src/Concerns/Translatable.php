@@ -57,17 +57,13 @@ trait Translatable
     {
         $translatorSoftDeletes = config('translator.soft_deletes');
 
-        if (! $translatorSoftDeletes && ! $forceDelete) {
-            return;
-        }
-
-        if ($translatorSoftDeletes && ! $forceDelete) {
-            $this->translations()->delete();
+        if ($translatorSoftDeletes && $forceDelete) {
+            $this->translations()->forceDelete();
 
             return;
         }
 
-        $this->translations->forceDelete();
+        $this->translations()->delete();
     }
 
     /**
