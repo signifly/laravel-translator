@@ -18,7 +18,7 @@ class Post extends Model
 {
     use Translatable;
 
-    public function getTranslatableFields() : array
+    public function getTranslatableAttributes() : array
     {
         return ['title', 'description'];
     }
@@ -54,7 +54,7 @@ To get started follow the installation instructions below.
 You can install the package via composer:
 
 ```bash
-$ composer require signifly/laravel-translator
+composer require signifly/laravel-translator
 ```
 
 The package will automatically register itself.
@@ -131,7 +131,7 @@ return [
 
 ## Testing
 ```bash
-$ composer test
+composer test
 ```
 
 ## Security
