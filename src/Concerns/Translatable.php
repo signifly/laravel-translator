@@ -243,7 +243,7 @@ trait Translatable
     {
         return collect($data)
             ->filter(function ($value, $attribute) {
-                return $this->shouldBeTranslated($attribute);
+                return $this->shouldBeTranslated($attribute) && ! is_null($value);
             })
             ->map(function ($value, $attribute) use ($langCode) {
                 return $this->translateAttribute($langCode, $attribute, $value);
@@ -291,11 +291,13 @@ trait Translatable
             ->selectRaw('@modifier_count / ? * 100 as translations_percentage', [
                 count($this->getTranslatableAttributes()),
             ])
-            ->addSubSelect('translations_last_modified_at', $translationModel::select('updated_at')
-                ->whereColumn($relation->getQualifiedForeignKeyName(), $relation->getQualifiedParentKeyName())
-                ->where('translatable_type', $model)
-                ->where('language_code', $langCode)
-                ->orderBy('updated_at', 'desc')
+            ->addSubSelect(
+                'translations_last_modified_at',
+                $translationModel::select('updated_at')
+                    ->whereColumn($relation->getQualifiedForeignKeyName(), $relation->getQualifiedParentKeyName())
+                    ->where('translatable_type', $model)
+                    ->where('language_code', $langCode)
+                    ->orderBy('updated_at', 'desc')
             );
     }
 }
