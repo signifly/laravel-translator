@@ -268,6 +268,41 @@ trait Translatable
     }
 
     /**
+     * Create and translate for the specified language code.
+     *
+     * @param  string $langCode
+     * @param  array  $data
+     * @return self
+     */
+    public function createAndTranslate(string $langCode, array $data): self
+    {
+        $this->create($data);
+        $this->translate($langCode, $data);
+
+        return $this;
+    }
+
+    /**
+     * Update and translate for the specified language code.
+     *
+     * @param  string $langCode
+     * @param  array  $data
+     * @return self
+     */
+    public function updateAndTranslate(string $langCode, array $data): self
+    {
+        $this->update(
+            $this->isDefaultLanguage($langCode)
+            ? $data
+            : Arr::only($data, $this->getUpdatableAttributes())
+        );
+
+        $this->translate($langCode, $data);
+
+        return $this;
+    }
+
+    /**
      * Scope a query to include translation stats.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
