@@ -43,7 +43,22 @@ $post->translateAttribute('en', 'title', 'Some title');
 // returns Signifly\Translator\Contracts\Translation
 ```
 
-*Note:* When storing translations it does not update the translatable model (Post). So if you need to update the attributes, call the `update()` method on the model.
+If you want to update the model's attributes as well, it can be accomplished using:
+
+```php
+Post::createAndTranslate('en', [
+    'title' => 'Some title',
+    'description' => 'description',
+]);
+
+// or when updating
+$post->updateAndTranslate('en', [
+    'title' => 'New title',
+    'description' => 'New description',
+]);
+```
+
+The `updateAndTranslate` method will detect if it is the default language and update accordingly.
 
 ## Documentation
 
