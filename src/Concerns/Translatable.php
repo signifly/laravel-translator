@@ -273,14 +273,14 @@ trait Translatable
      *
      * @param  string $langCode
      * @param  array  $data
-     * @return self
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function createAndTranslate(string $langCode, array $data): self
+    public static function createAndTranslate(string $langCode, array $data): Model
     {
-        $this->create($data);
-        $this->translate($langCode, $data);
+        $model = self::create($data);
+        $model->translate($langCode, $data);
 
-        return $this;
+        return $model;
     }
 
     /**
@@ -288,9 +288,9 @@ trait Translatable
      *
      * @param  string $langCode
      * @param  array  $data
-     * @return self
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function updateAndTranslate(string $langCode, array $data): self
+    public function updateAndTranslate(string $langCode, array $data): Model
     {
         $this->update(
             $this->isDefaultLanguage($langCode)
