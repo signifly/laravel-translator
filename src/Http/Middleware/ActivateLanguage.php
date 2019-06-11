@@ -2,6 +2,8 @@
 
 namespace Signifly\Translator\Http\Middleware;
 
+use Closure;
+
 class ActivateLanguage
 {
     /**
