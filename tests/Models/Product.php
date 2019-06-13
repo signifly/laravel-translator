@@ -9,7 +9,7 @@ class Product extends Model
 {
     use Translatable;
 
-    protected $guarded = [];
+    protected $fillable = ['name', 'description'];
 
     public function getTranslatableAttributes(): array
     {
