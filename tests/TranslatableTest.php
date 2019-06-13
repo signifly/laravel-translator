@@ -62,6 +62,20 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
+    public function it_creates_and_translates_a_product()
+    {
+        $product = Product::createAndTranslate('en', [
+            'name' => 'Name',
+            'description' => 'Description',
+        ]);
+
+        $this->assertTrue($product->exists());
+        $this->assertCount(2, $product->translations);
+        $this->assertTrue($product->hasTranslation('en', 'name'));
+        $this->assertTrue($product->hasTranslation('en', 'description'));
+    }
+
+    /** @test */
     public function it_updates_and_translates_the_model_if_its_the_default_language()
     {
         $this->assertEquals('name 1', $this->product->name);
