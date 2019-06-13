@@ -60,4 +60,62 @@ class TranslatableTest extends TestCase
             $this->assertEquals('nogle sko', $product->description);
         });
     }
+
+    /** @test */
+    public function it_updates_and_translates_the_model_if_its_the_default_language()
+    {
+        $this->assertEquals('name 1', $this->product->name);
+        $this->assertEquals('description 1', $this->product->description);
+
+        $this->product->updateAndTranslate('en', [
+            'name' => 'new name',
+            'description' => 'new description',
+        ]);
+
+        tap($this->product->fresh(), function ($product) {
+            $this->assertEquals('new name', $product->name);
+            $this->assertEquals('new description', $product->description);
+            $this->assertTrue($product->hasTranslation('en', 'name'));
+            $this->assertTrue($product->hasTranslation('en', 'description'));
+        });
+    }
+
+    /** @test */
+    public function it_only_translates_the_model_if_it_is_not_the_default_language()
+    {
+        $this->assertEquals('name 1', $this->product->name);
+        $this->assertEquals('description 1', $this->product->description);
+
+        $this->product->updateAndTranslate('da', [
+            'name' => 'new name',
+            'description' => 'new description',
+        ]);
+
+        tap($this->product->fresh(), function ($product) {
+            $this->assertEquals('name 1', $product->name);
+            $this->assertEquals('description 1', $product->description);
+            $this->assertTrue($product->hasTranslation('da', 'name'));
+            $this->assertTrue($product->hasTranslation('da', 'description'));
+        });
+    }
+
+    /** @test */
+    public function it_retrieves_translation_stats()
+    {
+        $this->markTestIncomplete('Need to rewrite scope to support sqlite!');
+
+        $this->product->updateAndTranslate('en', [
+            'name' => 'new name',
+        ]);
+        $this->product->updateAndTranslate('da', [
+            'name' => 'nyt navn',
+            'description' => 'beskrivelse',
+        ]);
+
+        $danish = Product::withTranslationStats('da')->first();
+        $english = Product::withTranslationStats('en')->first();
+
+        $this->assertEquals(100, $danish->translations_percentage);
+        $this->assertEquals(50, $english->translations_percentage);
+    }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Signifly\Translator\Tests\Models\Product;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Signifly\Translator\TranslatorServiceProvider;
+use Signifly\BuilderMacros\BuilderMacroServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -32,6 +33,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
+            BuilderMacroServiceProvider::class,
             TranslatorServiceProvider::class,
         ];
     }
