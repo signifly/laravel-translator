@@ -2,8 +2,12 @@
 
 namespace Signifly\Translator;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Config\Repository;
+use Signifly\Translator\Models\Translation;
+use Signifly\Translator\Exceptions\InvalidConfiguration;
 use Signifly\Translator\Contracts\Translator as Contract;
+use Signifly\Translator\Contracts\Translation as TranslationContract;
 
 class Translator implements Contract
 {
@@ -33,6 +37,18 @@ class Translator implements Contract
     public function defaultLanguageCode(): string
     {
         return $this->config->get('translator.default_language_code');
+    }
+
+    public function determineModel(): string
+    {
+        $model = $this->config->get('translator.translation_model') ?? Translation::class;
+
+        if (! is_a($model, TranslationContract::class, true)
+            || ! is_a($model, Model::class, true)) {
+            throw InvalidConfiguration::modelIsNotValid($model);
+        }
+
+        return $model;
     }
 
     public function disableAutoTranslation(): void

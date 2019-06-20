@@ -12,6 +12,8 @@ interface Translator
 
     public function defaultLanguageCode(): string;
 
+    public function determineModel(): string;
+
     public function disableAutoTranslation(): void;
 
     public function enableAutoTranslation(): void;

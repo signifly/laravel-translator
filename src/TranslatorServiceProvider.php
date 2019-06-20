@@ -2,12 +2,8 @@
 
 namespace Signifly\Translator;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
-use Signifly\Translator\Models\Translation;
-use Signifly\Translator\Exceptions\InvalidConfiguration;
 use Signifly\Translator\Contracts\Translator as TranslatorContract;
-use Signifly\Translator\Contracts\Translation as TranslationContract;
 
 class TranslatorServiceProvider extends ServiceProvider
 {
@@ -66,24 +62,5 @@ class TranslatorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
         ], 'translator-migrations');
-    }
-
-    public static function determineTranslationModel(): string
-    {
-        $model = config('translator.translation_model') ?? Translation::class;
-
-        if (! is_a($model, TranslationContract::class, true)
-            || ! is_a($model, Model::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($model);
-        }
-
-        return $model;
-    }
-
-    public static function getTranslationModelInstance(): TranslationContract
-    {
-        $model = self::determineTranslationModel();
-
-        return new $model();
     }
 }

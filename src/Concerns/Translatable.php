@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Signifly\Translator\Facades\Translator;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Signifly\Translator\TranslatorServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
@@ -41,10 +40,7 @@ trait Translatable
      */
     public function translations(): MorphMany
     {
-        return $this->morphMany(
-            TranslatorServiceProvider::determineTranslationModel(),
-            'translatable'
-        );
+        return $this->morphMany(Translator::determineModel(), 'translatable');
     }
 
     /**
@@ -347,7 +343,7 @@ trait Translatable
         $relation = $query->getRelation('translations');
 
         $model = get_class($this);
-        $translationModel = TranslatorServiceProvider::determineTranslationModel();
+        $translationModel = Translator::determineModel();
 
         $subQuery = $translationModel::selectRaw('count(*)')
             ->whereColumn($relation->getQualifiedForeignKeyName(), $relation->getQualifiedParentKeyName())
