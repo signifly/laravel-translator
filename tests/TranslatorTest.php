@@ -3,6 +3,7 @@
 namespace Signifly\Translator\Tests;
 
 use Signifly\Translator\Facades\Translator;
+use Signifly\Translator\Models\Translation;
 
 class TranslatorTest extends TestCase
 {
@@ -14,6 +15,12 @@ class TranslatorTest extends TestCase
         Translator::activateLanguage('da');
 
         $this->assertEquals('da', Translator::activeLanguageCode());
+    }
+
+    /** @test */
+    public function it_determines_the_translation_model()
+    {
+        $this->assertEquals(Translation::class, Translator::determineModel());
     }
 
     /** @test */
