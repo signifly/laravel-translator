@@ -24,7 +24,7 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
-    public function it_can_translate_multiple_attribute()
+    public function it_can_translate_multiple_attributes()
     {
         $this->assertCount(0, $this->product->translations);
 
@@ -36,7 +36,7 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_correct_language_with_auto_translate_attributes_enabled()
+    public function it_returns_the_active_language_with_auto_translation_enabled()
     {
         Translator::activateLanguage('da');
         Translator::enableAutoTranslation();
@@ -61,7 +61,32 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_default_language_when_auto_translation_is_enabled_but_no_active_language()
+    public function it_converts_to_an_array_with_auto_translation_enabled()
+    {
+        Translator::activateLanguage('da');
+        Translator::enableAutoTranslation();
+
+        $this->assertCount(0, $this->product->translations);
+
+        $this->product->updateAndTranslate('en', [
+            'name' => 'shoes',
+            'description' => 'some shoes',
+        ]);
+
+        $this->product->updateAndTranslate('da', [
+            'name' => 'sko',
+            'description' => 'nogle sko',
+        ]);
+
+        tap($this->product->fresh(), function ($product) {
+            $data = $product->toArray();
+            $this->assertEquals('sko', $data['name']);
+            $this->assertEquals('nogle sko', $data['description']);
+        });
+    }
+
+    /** @test */
+    public function it_returns_the_default_language_with_auto_translation_enabled_and_no_active_language()
     {
         Translator::enableAutoTranslation();
 
