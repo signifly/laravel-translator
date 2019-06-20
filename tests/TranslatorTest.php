@@ -9,7 +9,7 @@ class TranslatorTest extends TestCase
     /** @test */
     public function it_activates_a_language()
     {
-        $this->assertNull(Translator::activeLanguageCode());
+        $this->assertEquals('en', Translator::activeLanguageCode());
 
         Translator::activateLanguage('da');
 
