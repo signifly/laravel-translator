@@ -30,7 +30,7 @@ trait Translatable
                 : $model->clearTranslations(true);
         });
 
-        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
+        if (in_array(SoftDeletes::class, class_uses_recursive(static::class))) {
             static::restoring(function (Model $model) {
                 if (! Translator::softDeletes()) {
                     return;
@@ -51,6 +51,25 @@ trait Translatable
         return $this->morphMany(
             TranslatorServiceProvider::determineTranslationModel(),
             'translatable'
+        );
+    }
+
+    /**
+     * Convert the model's attributes to an array.
+     *
+     * @return array
+     */
+    public function attributesToArray()
+    {
+        $activeLangCode = Translator::activeLanguageCode();
+
+        if (! Translator::autoTranslates()) {
+            return parent::attributesToArray();
+        }
+
+        return array_merge(
+            parent::attributesToArray(),
+            $this->getTranslatedValues($activeLangCode)
         );
     }
 
@@ -79,7 +98,7 @@ trait Translatable
      */
     public function getAttributeValue($key)
     {
-        $activeLangCode = Translator::activeLanguageCode() ?? Translator::defaultLanguageCode();
+        $activeLangCode = Translator::activeLanguageCode();
 
         if (! Translator::autoTranslates()) {
             return parent::getAttributeValue($key);
