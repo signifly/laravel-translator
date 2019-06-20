@@ -14,13 +14,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
 {
-    /**
-     * The attributes that are translatable.
-     *
-     * @var array
-     */
-    protected $translatable = [];
-
     public static function bootTranslatable(): void
     {
         // Clean up translations
@@ -132,7 +125,11 @@ trait Translatable
      */
     public function getTranslatableAttributes(): array
     {
-        return $this->translatable;
+        if (isset($this->translatable)) {
+            return $this->translatable;
+        }
+
+        return [];
     }
 
     /**
