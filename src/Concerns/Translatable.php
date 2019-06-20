@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Signifly\Translator\Facades\Translator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Signifly\Translator\TranslatorServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -17,14 +18,14 @@ trait Translatable
     {
         // Clean up translations
         static::deleting(function (Model $model) {
-            collect(class_uses_recursive($model))->contains(SoftDeletes::class)
+            in_array(SoftDeletes::class, class_uses_recursive($model))
                 ? $model->clearTranslations($model->forceDeleting)
                 : $model->clearTranslations(true);
         });
 
         if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
             static::restoring(function (Model $model) {
-                if (! config('translator.soft_deletes')) {
+                if (! Translator::softDeletes()) {
                     return;
                 }
 
@@ -56,9 +57,7 @@ trait Translatable
      */
     protected function clearTranslations($forceDelete = false): void
     {
-        $translatorSoftDeletes = config('translator.soft_deletes');
-
-        if ($translatorSoftDeletes && $forceDelete) {
+        if (Translator::softDeletes() && $forceDelete) {
             $this->translations()->forceDelete();
 
             return;
@@ -75,17 +74,21 @@ trait Translatable
      */
     public function getAttributeValue($key)
     {
-        $value = parent::getAttributeValue($key);
-        $activeLangCode = config('translator.active_language_code');
+        $activeLangCode = Translator::activeLanguageCode();
 
-        if (
-            config('translator.auto_translate_attributes')
-            && $this->hasTranslation($activeLangCode, $key)
-        ) {
-            return $this->getTranslationValue($activeLangCode, $key);
+        if (is_null($activeLangCode)) {
+            return parent::getAttributeValue($key);
         }
 
-        return $value;
+        if (! Translator::autoTranslates()) {
+            return parent::getAttributeValue($key);
+        }
+
+        if (! $this->hasTranslation($activeLangCode, $key)) {
+            return parent::getAttributeValue($key);
+        }
+
+        return $this->getTranslationValue($activeLangCode, $key);
     }
 
     /**
@@ -179,17 +182,6 @@ trait Translatable
     }
 
     /**
-     * Check if it's the default language code.
-     *
-     * @param  string  $langCode
-     * @return bool
-     */
-    public function isDefaultLanguage(string $langCode): bool
-    {
-        return config('translator.default_language_code') === $langCode;
-    }
-
-    /**
      * Check if a translation is outdated.
      *
      * @param  string  $langCode
@@ -198,12 +190,12 @@ trait Translatable
      */
     public function isTranslationOutdated(string $langCode, string $attribute): bool
     {
-        if ($this->isDefaultLanguage($langCode)) {
+        if (Translator::isDefaultLanguage($langCode)) {
             return false;
         }
 
         $defaultTranslation = $this->translations->where('key', $attribute)
-            ->where('language_code', config('translator.default_language_code'))
+            ->where('language_code', Translator::defaultLanguageCode())
             ->first();
 
         if (! $defaultTranslation) {
@@ -293,7 +285,7 @@ trait Translatable
     public function updateAndTranslate(string $langCode, array $data): Model
     {
         $this->update(
-            $this->isDefaultLanguage($langCode)
+            Translator::isDefaultLanguage($langCode)
             ? $data
             : Arr::only($data, $this->getUpdatableAttributes())
         );

@@ -2,6 +2,7 @@
 
 namespace Signifly\Translator\Tests;
 
+use Signifly\Translator\Facades\Translator;
 use Signifly\Translator\Tests\Models\Product;
 
 class TranslatableTest extends TestCase
@@ -37,10 +38,8 @@ class TranslatableTest extends TestCase
     /** @test */
     public function it_returns_the_correct_language_with_auto_translate_attributes_enabled()
     {
-        config([
-            'translator.active_language_code' => 'da',
-            'translator.auto_translate_attributes' => true,
-        ]);
+        Translator::activateLanguage('da');
+        Translator::enableAutoTranslation();
 
         $this->assertCount(0, $this->product->translations);
 
