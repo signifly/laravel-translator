@@ -107,11 +107,18 @@ trait Translatable
      */
     public function getColumnsFromDatabase(): Collection
     {
-        $columns = Collection::make(
-            DB::select('SHOW COLUMNS FROM '.$this->getTable())
-        );
+        $connection = $this->getConnectionName() ?? config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
 
-        return $columns->pluck('Field');
+        if ($driver === 'sqlite') {
+            return Collection::make(
+                DB::select('PRAGMA table_info('.$this->getTable().')')
+            )->pluck('name');
+        }
+
+        return Collection::make(
+            DB::select('SHOW COLUMNS FROM '.$this->getTable())
+        )->pluck('Field');
     }
 
     /**

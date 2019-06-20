@@ -180,4 +180,16 @@ class TranslatableTest extends TestCase
         $this->assertEquals(100, $danish->translations_percentage);
         $this->assertEquals(50, $english->translations_percentage);
     }
+
+    /** @test */
+    public function it_reads_columns_from_the_database()
+    {
+        $columns = $this->product->getColumnsFromDatabase();
+
+        $this->assertTrue($columns->contains('id'));
+        $this->assertTrue($columns->contains('name'));
+        $this->assertTrue($columns->contains('description'));
+        $this->assertTrue($columns->contains('created_at'));
+        $this->assertTrue($columns->contains('updated_at'));
+    }
 }
