@@ -11,8 +11,5 @@ class Product extends Model
 
     protected $fillable = ['name', 'description'];
 
-    public function getTranslatableAttributes(): array
-    {
-        return ['name', 'description'];
-    }
+    protected $translatable = ['name', 'description'];
 }

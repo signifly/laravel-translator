@@ -14,6 +14,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
 {
+    /**
+     * The attributes that are translatable.
+     *
+     * @var array
+     */
+    protected $translatable = [];
+
     public static function bootTranslatable(): void
     {
         // Clean up translations
@@ -33,8 +40,6 @@ trait Translatable
             });
         }
     }
-
-    abstract public function getTranslatableAttributes(): array;
 
     /**
      * The associated translations relation.
@@ -99,6 +104,16 @@ trait Translatable
         );
 
         return $columns->pluck('Field');
+    }
+
+    /**
+     * Get the translatable attributes.
+     *
+     * @return array
+     */
+    public function getTranslatableAttributes(): array
+    {
+        return $this->translatable;
     }
 
     /**
@@ -219,6 +234,19 @@ trait Translatable
     public function shouldBeTranslated(string $attribute): bool
     {
         return in_array($attribute, $this->getTranslatableAttributes());
+    }
+
+    /**
+     * Set the translatable attributes for the model.
+     *
+     * @param  array  $attributes
+     * @return self
+     */
+    public function translatable(array $attributes): self
+    {
+        $this->translatable = $attributes;
+
+        return $this;
     }
 
     /**
