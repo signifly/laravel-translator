@@ -74,7 +74,7 @@ trait Translatable
      */
     public function getAttributeValue($key)
     {
-        $activeLangCode = Translator::activeLanguageCode();
+        $activeLangCode = Translator::activeLanguageCode() ?? Translator::defaultLanguageCode();
 
         if (is_null($activeLangCode)) {
             return parent::getAttributeValue($key);

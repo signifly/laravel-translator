@@ -61,6 +61,30 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
+    public function it_returns_the_default_language_when_auto_translation_is_enabled_but_no_active_language()
+    {
+        Translator::enableAutoTranslation();
+
+        $this->assertCount(0, $this->product->translations);
+
+        $this->product->updateAndTranslate('en', [
+            'name' => 'shoes',
+            'description' => 'some shoes',
+        ]);
+
+        $this->product->translate('da', [
+            'name' => 'sko',
+            'description' => 'nogle sko',
+        ]);
+        $this->assertEquals(4, $this->product->translations()->count());
+
+        tap($this->product->fresh(), function ($product) {
+            $this->assertEquals('shoes', $product->name);
+            $this->assertEquals('some shoes', $product->description);
+        });
+    }
+
+    /** @test */
     public function it_creates_and_translates_a_product()
     {
         $product = Product::createAndTranslate('en', [
