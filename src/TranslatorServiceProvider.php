@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Signifly\Translator\Models\Translation;
 use Signifly\Translator\Exceptions\InvalidConfiguration;
+use Signifly\Translator\Contracts\Translator as TranslatorContract;
 use Signifly\Translator\Contracts\Translation as TranslationContract;
 
 class TranslatorServiceProvider extends ServiceProvider
@@ -32,6 +33,19 @@ class TranslatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(TranslatorContract::class, function ($app) {
+            return new Translator($app['config']);
+        });
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [TranslatorContract::class];
     }
 
     protected function publishConfigs(): void
