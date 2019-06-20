@@ -6,7 +6,7 @@ interface Translator
 {
     public function activateLanguage(string $languageCode): void;
 
-    public function activeLanguageCode(): ?string;
+    public function activeLanguageCode(): string;
 
     public function autoTranslates(): bool;
 

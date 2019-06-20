@@ -20,9 +20,9 @@ class Translator implements Contract
         $this->config->set('translator.active_language_code', $languageCode);
     }
 
-    public function activeLanguageCode(): ?string
+    public function activeLanguageCode(): string
     {
-        return $this->config->get('translator.active_language_code');
+        return $this->config->get('translator.active_language_code') ?? $this->defaultLanguageCode();
     }
 
     public function autoTranslates(): bool
