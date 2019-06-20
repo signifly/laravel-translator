@@ -18,10 +18,10 @@ class Post extends Model
 {
     use Translatable;
 
-    public function getTranslatableAttributes() : array
-    {
-        return ['title', 'description'];
-    }
+    /** @var array */
+    protected $translatable = [
+        'title', 'description',
+    ];
 }
 ```
 
