@@ -10,7 +10,7 @@ return [
 
     /*
      * By default the package will not translate model attributes automatically.
-     * It should be used with caution as it performs extra requests.
+     *
      * Remember to eager load the translations
      * in order to optimize performance.
      */
@@ -42,7 +42,8 @@ return [
 
     /*
      * This model will be used to store translations.
-     * It should be implements the Signifly\Translator\Contracts\Translation interface
+     *
+     * It should implement the Signifly\Translator\Contracts\Translation interface
      * and extend Illuminate\Database\Eloquent\Model.
      */
     'translation_model' => \Signifly\Translator\Models\Translation::class,
