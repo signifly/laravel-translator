@@ -20,5 +20,7 @@ interface Translator
 
     public function isDefaultLanguage(string $languageCode): bool;
 
+    public function languageParameter(): string;
+
     public function softDeletes(): bool;
 }

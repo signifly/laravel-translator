@@ -66,6 +66,11 @@ class Translator implements Contract
         return $this->defaultLanguageCode() === $languageCode;
     }
 
+    public function languageParameter(): string
+    {
+        return $this->config->get('translator.language_parameter');
+    }
+
     public function softDeletes(): bool
     {
         return (bool) $this->config->get('translator.soft_deletes', false);
