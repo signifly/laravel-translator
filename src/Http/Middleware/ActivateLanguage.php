@@ -3,6 +3,7 @@
 namespace Signifly\Translator\Http\Middleware;
 
 use Closure;
+use Signifly\Translator\Facades\Translator;
 
 class ActivateLanguage
 {
@@ -15,10 +16,10 @@ class ActivateLanguage
      */
     public function handle($request, Closure $next)
     {
-        $param = config('translator.language_parameter');
-        $defaultLang = config('translator.default_language_code');
+        $param = Translator::languageParameter();
+        $defaultLang = Translator::defaultLanguageCode();
 
-        config(['translator.active_language_code' => $request->input($param, $defaultLang)]);
+        Translator::activateLanguage($request->input($param, $defaultLang));
 
         return $next($request);
     }
