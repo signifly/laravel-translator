@@ -141,7 +141,7 @@ trait Translatable
      * @param  string $langCode
      * @return array
      */
-    public function getTranslatedValues(string $langCode) : array
+    public function getTranslatedValues(string $langCode): array
     {
         return collect($this->getTranslatableAttributes())
             ->filter(function ($attribute) use ($langCode) {
