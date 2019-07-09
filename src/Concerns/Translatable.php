@@ -295,12 +295,22 @@ trait Translatable
      * @param  mixed $value
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function translateAttribute(string $langCode, string $attribute, $value): Model
+    public function translateAttribute(string $langCode, string $attribute, $value): ?Model
     {
-        return $this->translations()->updateOrCreate([
+        $translation = $this->translations()->firstOrNew([
             'language_code' => $langCode,
             'key' => $attribute,
         ], compact('value'));
+
+        if (is_string($value) && $value === '' || $value === null) {
+            $translation->delete();
+
+            return null;
+        }
+
+        $translation->save();
+
+        return $translation;
     }
 
     /**
