@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Signifly\Translator\Facades\Translator;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Signifly\Translator\Contracts\Translation;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
@@ -279,11 +280,12 @@ trait Translatable
     {
         return collect($data)
             ->filter(function ($value, $attribute) {
-                return $this->shouldBeTranslated($attribute) && ! is_null($value);
+                return $this->shouldBeTranslated($attribute);
             })
             ->map(function ($value, $attribute) use ($langCode) {
                 return $this->translateAttribute($langCode, $attribute, $value);
             })
+            ->filter()
             ->values();
     }
 
@@ -293,15 +295,17 @@ trait Translatable
      * @param  string $langCode
      * @param  string $attribute
      * @param  mixed $value
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Signifly\Translator\Contracts\Translation|null
      */
-    public function translateAttribute(string $langCode, string $attribute, $value): ?Model
+    public function translateAttribute(string $langCode, string $attribute, $value): ?Translation
     {
         $translation = $this->translations()->firstOrNew([
             'language_code' => $langCode,
             'key' => $attribute,
         ], compact('value'));
 
+        // If the value provided for translation is empty or null
+        // then delete the translation and return
         if (is_string($value) && $value === '' || $value === null) {
             $translation->delete();
 
