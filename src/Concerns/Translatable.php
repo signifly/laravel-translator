@@ -89,13 +89,18 @@ trait Translatable
     public function getAttributeValue($key)
     {
         $activeLangCode = Translator::activeLanguageCode();
+        $value = parent::getAttributeValue($key);
 
         if (! Translator::autoTranslates()) {
-            return parent::getAttributeValue($key);
+            return $value;
+        }
+
+        if (Translator::isDefaultLanguage($activeLangCode)) {
+            return $value;
         }
 
         if (! $this->hasTranslation($activeLangCode, $key)) {
-            return parent::getAttributeValue($key);
+            return $value;
         }
 
         return $this->getTranslationValue($activeLangCode, $key);
@@ -306,7 +311,7 @@ trait Translatable
 
         // If the value provided for translation is empty or null
         // then delete the translation and return
-        if (is_string($value) && $value === '' || $value === null) {
+        if (! is_bool($value) && ! is_array($value) && trim((string) $value) === '') {
             $translation->delete();
 
             return null;
@@ -341,11 +346,15 @@ trait Translatable
      */
     public function updateAndTranslate(string $langCode, array $data): Model
     {
-        $this->update(
-            Translator::isDefaultLanguage($langCode)
-            ? $data
-            : Arr::only($data, $this->getUpdatableAttributes())
-        );
+        // We update all the model's attributes, when it is the default language
+        if (Translator::isDefaultLanguage($langCode)) {
+            $this->update($data);
+        }
+
+        // Otherwise we only update the non-translatable attributes
+        else {
+            $this->update(Arr::only($data, $this->getUpdatableAttributes()));
+        }
 
         $this->translate($langCode, $data);
 
