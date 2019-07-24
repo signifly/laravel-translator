@@ -307,7 +307,7 @@ trait Translatable
         $translation = $this->translations()->firstOrNew([
             'language_code' => $langCode,
             'key' => $attribute,
-        ], compact('value'));
+        ]);
 
         // If the value provided for translation is empty or null
         // then delete the translation and return
@@ -317,7 +317,7 @@ trait Translatable
             return null;
         }
 
-        $translation->save();
+        $translation->update(compact('value'));
 
         return $translation;
     }
