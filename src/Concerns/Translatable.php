@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Signifly\Translator\Facades\Translator;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Signifly\Translator\Contracts\Translation;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Translatable
@@ -88,13 +89,18 @@ trait Translatable
     public function getAttributeValue($key)
     {
         $activeLangCode = Translator::activeLanguageCode();
+        $value = parent::getAttributeValue($key);
 
         if (! Translator::autoTranslates()) {
-            return parent::getAttributeValue($key);
+            return $value;
+        }
+
+        if (Translator::isDefaultLanguage($activeLangCode)) {
+            return $value;
         }
 
         if (! $this->hasTranslation($activeLangCode, $key)) {
-            return parent::getAttributeValue($key);
+            return $value;
         }
 
         return $this->getTranslationValue($activeLangCode, $key);
@@ -279,11 +285,12 @@ trait Translatable
     {
         return collect($data)
             ->filter(function ($value, $attribute) {
-                return $this->shouldBeTranslated($attribute) && ! is_null($value);
+                return $this->shouldBeTranslated($attribute);
             })
             ->map(function ($value, $attribute) use ($langCode) {
                 return $this->translateAttribute($langCode, $attribute, $value);
             })
+            ->filter()
             ->values();
     }
 
@@ -293,14 +300,26 @@ trait Translatable
      * @param  string $langCode
      * @param  string $attribute
      * @param  mixed $value
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Signifly\Translator\Contracts\Translation|null
      */
-    public function translateAttribute(string $langCode, string $attribute, $value): Model
+    public function translateAttribute(string $langCode, string $attribute, $value): ?Translation
     {
-        return $this->translations()->updateOrCreate([
+        $translation = $this->translations()->firstOrNew([
             'language_code' => $langCode,
             'key' => $attribute,
         ], compact('value'));
+
+        // If the value provided for translation is empty or null
+        // then delete the translation and return
+        if (! is_bool($value) && ! is_array($value) && trim((string) $value) === '') {
+            $translation->delete();
+
+            return null;
+        }
+
+        $translation->save();
+
+        return $translation;
     }
 
     /**
@@ -327,11 +346,15 @@ trait Translatable
      */
     public function updateAndTranslate(string $langCode, array $data): Model
     {
-        $this->update(
-            Translator::isDefaultLanguage($langCode)
-            ? $data
-            : Arr::only($data, $this->getUpdatableAttributes())
-        );
+        // We update all the model's attributes, when it is the default language
+        if (Translator::isDefaultLanguage($langCode)) {
+            $this->update($data);
+        }
+
+        // Otherwise we only update the non-translatable attributes
+        else {
+            $this->update(Arr::only($data, $this->getUpdatableAttributes()));
+        }
 
         $this->translate($langCode, $data);
 

@@ -192,4 +192,42 @@ class TranslatableTest extends TestCase
         $this->assertTrue($columns->contains('created_at'));
         $this->assertTrue($columns->contains('updated_at'));
     }
+
+    /** @test */
+    public function it_deletes_the_translation_if_an_empty_value_is_provided()
+    {
+        // Given a product with translations
+        $this->product->updateAndTranslate('da', [
+            'name' => 'new name',
+            'description' => 'new description',
+        ]);
+
+        tap($this->product->fresh(), function ($product) {
+            $this->assertEquals('name 1', $product->name);
+            $this->assertEquals('description 1', $product->description);
+            $this->assertTrue($product->hasTranslation('da', 'name'));
+            $this->assertTrue($product->hasTranslation('da', 'description'));
+            $this->assertEquals(
+                'new name',
+                $product->getTranslationValue('da', 'name')
+            );
+            $this->assertEquals(
+                'new description',
+                $product->getTranslationValue('da', 'description')
+            );
+        });
+
+        // Then set the description to an empty value
+        $this->product->updateAndTranslate('da', [
+            'description' => '',
+        ]);
+
+        // Assert that the attribute is empty and
+        // the translation has been deleted
+        tap($this->product->fresh(), function ($product) {
+            $this->assertEquals('description 1', $product->description);
+            $this->assertFalse($product->hasTranslation('da', 'description'));
+            $this->assertNull($product->getTranslationValue('da', 'description'));
+        });
+    }
 }
