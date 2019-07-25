@@ -317,7 +317,7 @@ trait Translatable
             return null;
         }
 
-        $translation->update(compact('value'));
+        $translation->fill(compact('value'))->save();
 
         return $translation;
     }
