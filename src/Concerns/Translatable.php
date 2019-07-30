@@ -372,7 +372,7 @@ trait Translatable
     {
         $relation = $query->getRelation('translations');
 
-        $model = get_class($this);
+        $model = $this->getMorphClass();
         $translationModel = Translator::determineModel();
 
         $subQuery = $translationModel::selectRaw('count(*)')
