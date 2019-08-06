@@ -4,7 +4,6 @@ namespace Signifly\Translator\Concerns;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Signifly\Translator\Facades\Translator;
@@ -111,20 +110,11 @@ trait Translatable
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getColumnsFromDatabase(): Collection
+    public function getTableColumns(): Collection
     {
-        $connection = $this->getConnectionName() ?? config('database.default');
-        $driver = config("database.connections.{$connection}.driver");
-
-        if ($driver === 'sqlite') {
-            return Collection::make(
-                DB::select('PRAGMA table_info('.$this->getTable().')')
-            )->pluck('name');
-        }
-
-        return Collection::make(
-            DB::select('SHOW COLUMNS FROM '.$this->getTable())
-        )->pluck('Field');
+        return collect($this->getConnection()
+            ->getSchemaBuilder()
+            ->getColumnListing($this->getTable()));
     }
 
     /**
@@ -185,7 +175,7 @@ trait Translatable
         $fillable = collect($this->getFillable());
 
         if ($fillable->isEmpty()) {
-            $fillable = $this->getColumnsFromDatabase();
+            $fillable = $this->getTableColumns();
         }
 
         return $fillable->diff($this->getTranslatableAttributes())

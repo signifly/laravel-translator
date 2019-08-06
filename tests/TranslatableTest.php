@@ -182,9 +182,9 @@ class TranslatableTest extends TestCase
     }
 
     /** @test */
-    public function it_reads_columns_from_the_database()
+    public function it_reads_columns_from_the_schema()
     {
-        $columns = $this->product->getColumnsFromDatabase();
+        $columns = $this->product->getTableColumns();
 
         $this->assertTrue($columns->contains('id'));
         $this->assertTrue($columns->contains('name'));
