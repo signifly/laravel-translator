@@ -162,7 +162,15 @@ trait Translatable
             ->where('language_code', $langCode)
             ->first();
 
-        return $translation ? $translation->value : null;
+        if ($translation === null) {
+            return null;
+        }
+
+        if ($this->hasCast($attribute)) {
+            return $this->castAttribute($attribute, $translation->value);
+        }
+
+        return $translation->value;
     }
 
     /**
@@ -299,12 +307,16 @@ trait Translatable
             'key' => $attribute,
         ]);
 
-        // If the value provided for translation is empty or null
+        // If the value provided for translation is empty
         // then delete the translation and return
         if (! is_bool($value) && ! is_array($value) && trim((string) $value) === '') {
             $translation->delete();
 
             return null;
+        }
+
+        if ($this->isJsonCastable($attribute)) {
+            $value = $this->castAttributeAsJson($attribute, $value);
         }
 
         $translation->fill(compact('value'))->save();
