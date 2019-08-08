@@ -51,6 +51,7 @@ abstract class TestCase extends Orchestra
             $table->increments('id');
             $table->string('name');
             $table->text('description');
+            $table->text('data')->nullable();
             $table->timestamps();
         });
     }
@@ -67,6 +68,9 @@ abstract class TestCase extends Orchestra
             Product::create([
                 'name' => "name {$index}",
                 'description' => "description {$index}",
+                'data' => [
+                    'person' => ['name' => 'John Doe', 'age' => 75],
+                ],
             ]);
         }
     }

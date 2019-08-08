@@ -230,4 +230,24 @@ class TranslatableTest extends TestCase
             $this->assertNull($product->getTranslationValue('da', 'description'));
         });
     }
+
+    /** @test */
+    public function it_translates_json_values()
+    {
+        $daData = ['person' => ['navn' => 'John Doe', 'alder' => 75]];
+        $enData = ['person' => ['name' => 'John Doe', 'age' => 75]];
+
+        $this->product->updateAndTranslate('en', [
+            'data' => $enData,
+        ]);
+
+        $this->product->updateAndTranslate('da', [
+            'data' => $daData,
+        ]);
+
+        tap($this->product->fresh(), function ($product) use ($daData, $enData) {
+            $this->assertEquals($daData, $product->getTranslationValue('da', 'data'));
+            $this->assertEquals($enData, $product->getTranslationValue('en', 'data'));
+        });
+    }
 }

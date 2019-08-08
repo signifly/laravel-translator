@@ -9,7 +9,22 @@ class Product extends Model
 {
     use Translatable;
 
-    protected $fillable = ['name', 'description'];
+    /** @var array */
+    protected $fillable = [
+        'name',
+        'description',
+        'data',
+    ];
 
-    protected $translatable = ['name', 'description'];
+    /** @var array */
+    protected $casts = [
+        'data' => 'json',
+    ];
+
+    /** @var array */
+    protected $translatable = [
+        'name',
+        'description',
+        'data',
+    ];
 }
