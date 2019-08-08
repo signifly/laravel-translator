@@ -163,7 +163,7 @@ trait Translatable
             ->first();
 
         if ($translation === null) {
-            return null;
+            return;
         }
 
         if ($this->hasCast($attribute)) {
