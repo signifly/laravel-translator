@@ -382,18 +382,18 @@ trait Translatable
             ->where('translatable_type', $model)
             ->where('language_code', $langCode);
 
-        return $query->defaultSelectAll()
+        return $query->select($query->getQuery()->from.'.*')
             ->selectRaw("@modifier_count := ({$subQuery->toSql()}) as translations_count", $subQuery->getBindings())
             ->selectRaw('@modifier_count / ? * 100 as translations_percentage', [
                 count($this->getTranslatableAttributes()),
             ])
-            ->addSubSelect(
-                'translations_last_modified_at',
-                $translationModel::select('updated_at')
+            ->addSelect([
+                'translations_last_modified_at' => $translationModel::select('updated_at')
                     ->whereColumn($relation->getQualifiedForeignKeyName(), $relation->getQualifiedParentKeyName())
                     ->where('translatable_type', $model)
                     ->where('language_code', $langCode)
                     ->orderBy('updated_at', 'desc')
-            );
+                    ->limit(1)
+            ]);
     }
 }
