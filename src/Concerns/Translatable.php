@@ -393,7 +393,7 @@ trait Translatable
                     ->where('translatable_type', $model)
                     ->where('language_code', $langCode)
                     ->orderBy('updated_at', 'desc')
-                    ->limit(1)
+                    ->limit(1),
             ]);
     }
 }
