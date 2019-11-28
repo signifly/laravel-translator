@@ -382,7 +382,13 @@ trait Translatable
             ->where('translatable_type', $model)
             ->where('language_code', $langCode);
 
-        return $query->select($query->getQuery()->from.'.*')
+        // Select *all* columns from the "primary" query table
+        // if no other columns have been selected
+        if (is_null($query->getQuery()->columns)) {
+            $query->select($query->getQuery()->from.'.*');
+        }
+
+        return $query
             ->selectRaw("@modifier_count := ({$subQuery->toSql()}) as translations_count", $subQuery->getBindings())
             ->selectRaw('@modifier_count / ? * 100 as translations_percentage', [
                 count($this->getTranslatableAttributes()),
