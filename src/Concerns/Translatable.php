@@ -2,14 +2,14 @@
 
 namespace Signifly\Translator\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Signifly\Translator\Facades\Translator;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Signifly\Translator\Contracts\Translation;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Signifly\Translator\Facades\Translator;
 
 trait Translatable
 {

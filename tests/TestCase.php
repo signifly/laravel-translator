@@ -3,10 +3,10 @@
 namespace Signifly\Translator\Tests;
 
 use CreateTranslationsTable;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Signifly\Translator\Tests\Models\Product;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Signifly\Translator\Tests\Models\Product;
 use Signifly\Translator\TranslatorServiceProvider;
 
 abstract class TestCase extends Orchestra

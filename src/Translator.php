@@ -2,12 +2,12 @@
 
 namespace Signifly\Translator;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Config\Repository;
-use Signifly\Translator\Models\Translation;
-use Signifly\Translator\Exceptions\InvalidConfiguration;
-use Signifly\Translator\Contracts\Translator as Contract;
+use Illuminate\Database\Eloquent\Model;
 use Signifly\Translator\Contracts\Translation as TranslationContract;
+use Signifly\Translator\Contracts\Translator as Contract;
+use Signifly\Translator\Exceptions\InvalidConfiguration;
+use Signifly\Translator\Models\Translation;
 
 class Translator implements Contract
 {
