@@ -148,12 +148,15 @@ return [
 
 The package comes with a couple of middlewares that you might want to apply in order to get some extra functionality.
 
-**Auto Translation**
+
+#### Auto Translation
+
 You can enable this either by setting the `auto_translate_attributes` to `true` in the config or applying the `Signifly\Translator\Http\Middleware\AutoTranslate` middleware to your routes.
 
 For this to work you would also have to set the `active_language_code` in the config. 
 
-**Activate Language**
+#### Activate Language
+
 This can inferred from the request if you apply the `Signifly\Translator\Http\Middleware\ActivateLanguage` middleware to your routes.
 
 However, you may also accomplish this manually by calling `Translator::activateLanguage('en')`.
