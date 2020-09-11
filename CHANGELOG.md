@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-translator` will be documented in this file
 
+## 1.1.1 - 2020-09-11
+
+- Add support for Laravel 8
+
 ## 1.1.0 - 2020-03-03
 
 - Add support for Laravel 7
