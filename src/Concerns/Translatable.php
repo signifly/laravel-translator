@@ -98,7 +98,7 @@ trait Translatable
             return $value;
         }
 
-        if (! $this->hasTranslation($activeLangCode, $key)) {
+        if (! $this->hasTranslation($activeLangCode, $key) || $this->isDirty($key)) {
             return $value;
         }
 
